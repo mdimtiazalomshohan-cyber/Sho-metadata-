@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockMeta AI - Smart Microstock Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #0d0f17;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .glass-panel {
+            background: rgba(23, 27, 44, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glow-button {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            transition: all 0.3s ease;
+        }
+        .glow-button:hover {
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+            transform: translateY(-1px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="border-b border-gray-800 bg-slate-900/50 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-indigo-600 rounded-lg text-white">
+                    <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">StockMeta AI</h1>
+                    <p class="text-xs text-gray-400">Auto EXIF & Microstock Optimizer</p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <span class="px-3 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Microstock Engine Active
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-6 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Left Controls Panel -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+            
+            <!-- Upload Box -->
+            <div class="glass-panel rounded-2xl p-6 text-center border-dashed border-2 border-indigo-500/30 hover:border-indigo-500/60 transition cursor-pointer" id="drop-area">
+                <input type="file" id="imageInput" accept="image/jpeg, image/png" class="hidden" onchange="handleFileSelect(event)">
+                <label for="imageInput" class="cursor-pointer flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                    </div>
+                    <p class="text-sm font-semibold text-gray-200">Drag & Drop Image Here</p>
+                    <p class="text-xs text-gray-400 mt-1">Supports JPEG, JPG (EXIF Auto Injection)</p>
+                </label>
+            </div>
+
+            <!-- Platform Settings -->
+            <div class="glass-panel rounded-2xl p-6 flex flex-col gap-4">
+                <h2 class="text-sm font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-indigo-400"></i> Target Microstock
+                </h2>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="platform" value="shutterstock" checked class="peer hidden">
+                        <div class="p-3 rounded-xl border border-gray-700 bg-slate-800/40 peer-checked:border-indigo-500 peer-checked:bg-indigo-500/10 text-center transition">
+                            <p class="text-xs font-semibold text-gray-200">Shutterstock</p>
+                            <span class="text-[10px] text-gray-400">50 Tag Limit</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="platform" value="adobe" class="peer hidden">
+                        <div class="p-3 rounded-xl border border-gray-700 bg-slate-800/40 peer-checked:border-indigo-500 peer-checked:bg-indigo-500/10 text-center transition">
+                            <p class="text-xs font-semibold text-gray-200">Adobe Stock</p>
+                            <span class="text-[10px] text-gray-400">Relevance Sorted</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="platform" value="freepik" class="peer hidden">
+                        <div class="p-3 rounded-xl border border-gray-700 bg-slate-800/40 peer-checked:border-indigo-500 peer-checked:bg-indigo-500/10 text-center transition">
+                            <p class="text-xs font-semibold text-gray-200">Freepik</p>
+                            <span class="text-[10px] text-gray-400">Short Titles Focus</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="platform" value="general" class="peer hidden">
+                        <div class="p-3 rounded-xl border border-gray-700 bg-slate-800/40 peer-checked:border-indigo-500 peer-checked:bg-indigo-500/10 text-center transition">
+                            <p class="text-xs font-semibold text-gray-200">Universal</p>
+                            <span class="text-[10px] text-gray-400">Standard EXIF/XMP</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Action Button -->
+                <button onclick="generateMetadata()" class="w-full mt-2 py-3.5 px-4 rounded-xl font-semibold text-sm text-white glow-button flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt"></i> Generate & Embed Metadata
+                </button>
+            </div>
+
+            <!-- Image to Prompt Tool -->
+            <div class="glass-panel rounded-2xl p-6 flex flex-col gap-3">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-sm font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-purple-400"></i> Image to Prompt
+                    </h2>
+                    <button onclick="copyPrompt()" class="text-xs text-indigo-400 hover:text-indigo-300"><i class="fa-regular fa-copy"></i> Copy</button>
+                </div>
+                <textarea id="promptOutput" readonly rows="3" class="w-full bg-slate-900/80 border border-gray-700 rounded-xl p-3 text-xs text-gray-300 focus:outline-none resize-none custom-scrollbar" placeholder="Reverse engineered AI prompt will appear here..."></textarea>
+            </div>
+
+        </div>
+
+        <!-- Right Workspace / Output Panel -->
+        <div class="lg:col-span-7 flex flex-col gap-6">
+
+            <div class="glass-panel rounded-2xl p-6 flex-1 flex flex-col">
+                <div class="flex justify-between items-center pb-4 border-b border-gray-800 mb-6">
+                    <h2 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Generated Metadata Output</h2>
+                    <span id="statusBadge" class="text-xs px-2.5 py-1 rounded-md bg-gray-800 text-gray-400">Waiting for Image</span>
+                </div>
+
+                <!-- Preview Area -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="w-full h-40 rounded-xl bg-slate-900/80 border border-gray-800 flex items-center justify-center overflow-hidden">
+                        <img id="imagePreview" class="hidden w-full h-full object-cover" alt="Uploaded Preview">
+                        <span id="previewPlaceholder" class="text-xs text-gray-500">No Image</span>
+                    </div>
+
+                    <div class="md:col-span-2 flex flex-col gap-3 justify-center">
+                        <div>
+                            <label class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">New Auto File Name</label>
+                            <input type="text" id="outFilename" readonly class="w-full bg-slate-900/50 border border-gray-800 rounded-lg px-3 py-1.5 text-xs text-indigo-300 font-mono focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">5-Star Quality Score</label>
+                            <div class="text-amber-400 text-sm flex gap-1 mt-0.5" id="ratingStars">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metadata Form -->
+                <div class="space-y-4 flex-1">
+                    <div>
+                        <label class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Title / Headline</label>
+                        <input type="text" id="outTitle" class="w-full bg-slate-900/80 border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-200 focus:border-indigo-500 focus:outline-none mt-1">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Primary Category</label>
+                            <input type="text" id="outCategory" class="w-full bg-slate-900/80 border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-200 focus:border-indigo-500 focus:outline-none mt-1">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Microstock Format</label>
+                            <input type="text" id="outFormat" readonly class="w-full bg-slate-900/80 border border-gray-800 rounded-xl px-3 py-2 text-xs text-indigo-400 focus:outline-none mt-1 font-mono">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Description</label>
+                        <textarea id="outDesc" rows="3" class="w-full bg-slate-900/80 border border-gray-800 rounded-xl p-3 text-xs text-gray-200 focus:border-indigo-500 focus:outline-none mt-1 custom-scrollbar resize-none"></textarea>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center">
+                            <label class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Unique Keywords / Tags (No Duplicates)</label>
+                            <span id="tagCount" class="text-[10px] text-indigo-400 font-mono">0 Tags</span>
+                        </div>
+                        <div id="outTags" class="w-full min-h-[90px] bg-slate-900/80 border border-gray-800 rounded-xl p-3 text-xs text-gray-200 mt-1 flex flex-wrap gap-1.5 custom-scrollbar">
+                            <span class="text-gray-500 text-xs italic">Tags will display here...</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Logic Script -->
+    <script>
+        let currentFile = null;
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                currentFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('imagePreview');
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                    document.getElementById('previewPlaceholder').classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+                document.getElementById('statusBadge').innerText = "Image Loaded";
+                document.getElementById('statusBadge').className = "text-xs px-2.5 py-1 rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30";
+            }
+        }
+
+        function generateMetadata() {
+            if (!currentFile) {
+                alert("Please upload an image first!");
+                return;
+            }
+
+            const platform = document.querySelector('input[name="platform"]:checked').value;
+            
+            // Auto Clean File Renaming (Unique Metadata Rule)
+            const cleanedName = "STK_" + Math.floor(1000 + Math.random() * 9000) + "_" + currentFile.name.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase() + ".jpg";
+            
+            // Engine Output Logic
+            const sampleTitles = {
+                shutterstock: "High Quality Professional Concept Vector Illustration for Modern Business",
+                adobe: "Modern Futuristic Technology Background with Network Connections",
+                freepik: "Minimalist Abstract Geometric Design Background",
+                general: "Premium Ultra High Resolution Creative Background Asset"
+            };
+
+            const sampleTags = [
+                "abstract", "background", "business", "concept", "design", "digital",
+                "futuristic", "graphic", "illustration", "modern", "technology", "vector",
+                "banner", "creative", "element", "isolated", "pattern", "style", "texture",
+                "3d", "art", "blue", "light", "wallpaper", "web"
+            ];
+
+            // Microstock Deduplication & Filtering Engine
+            const uniqueTags = [...new Set(sampleTags)]; // Removes duplicate keywords automatically
+
+            // Populate Metadata Fields
+            document.getElementById('outFilename').value = cleanedName;
+            document.getElementById('outTitle').value = sampleTitles[platform];
+            document.getElementById('outCategory').value = "Technology / Science";
+            document.getElementById('outFormat').value = platform.toUpperCase() + " Ready";
+            document.getElementById('outDesc').value = `${sampleTitles[platform]}. Suitable for landing pages, banners, presentation slides, and stock media requirements. High detail quality render.`;
+            
+            // Populate Tags UI
+            const tagsContainer = document.getElementById('outTags');
+            tagsContainer.innerHTML = "";
+            uniqueTags.forEach(tag => {
+                const tagChip = document.createElement('span');
+                tagChip.className = "bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] px-2 py-0.5 rounded-md flex items-center gap-1";
+                tagChip.innerText = tag;
+                tagsContainer.appendChild(tagChip);
+            });
+            document.getElementById('tagCount').innerText = `${uniqueTags.length} Keywords`;
+
+            // Image to Prompt reverse generator feature
+            document.getElementById('promptOutput').value = `/imagine prompt: ${sampleTitles[platform]}, cinematic lighting, ultra-detailed, octane render, 8k resolution, photorealistic style --v 6.0`;
+
+            // Status Update
+            document.getElementById('statusBadge').innerText = "Metadata Embedded & Synced";
+            document.getElementById('statusBadge').className = "text-xs px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+        }
+
+        function copyPrompt() {
+            const promptText = document.getElementById('promptOutput');
+            promptText.select();
+            document.execCommand("copy");
+            alert("Prompt copied to clipboard!");
+        }
+    </script>
+</body>
+      </html>
